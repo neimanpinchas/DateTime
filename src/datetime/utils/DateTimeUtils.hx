@@ -71,18 +71,21 @@ class DateTimeUtils {
     *
     */
     static private function fromIsoString (str:String) : DateTime {
-        var tz = null;
+        var tz = 0;
+        var found_tz=false;
         final tzSep = str.fastCodeAt(str.length - 6);
         if (str.fastCodeAt(str.length - 1) == 'Z'.code) {
+            found_tz=true;
             tz = 0;
         } else if (tzSep == '+'.code || tzSep == '-'.code) {
             final tzHour = Std.parseInt(str.substr(str.length - 5, 2));
             final tzMin = Std.parseInt(str.substr(str.length - 2, 2));
+            found_tz=true;
             tz = (tzHour * 60) + tzMin;
             if (tzSep == '+'.code) tz = -1 * tz;
         }
 
-        if (tz == null){
+        if (!found_tz){
             throw '`$str` - incorrect date/time format. Not an ISO 8601 string: No timezone.';
         }
 
